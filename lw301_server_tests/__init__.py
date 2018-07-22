@@ -1,4 +1,4 @@
 # _*_ coding: utf-8 _*_
-from os import path
+import os.path
 
-PROJECT_ROOT = path.abspath(path.join(path.dirname(__file__), '..'))
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
