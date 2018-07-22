@@ -44,8 +44,8 @@ class LoggingHandler(RequestHandler):
             body_str = self.request.body.decode('utf-8')
         except:
             body_str = repr(self.request)
-        logger.info('Request\n{req!r}\nArgs: {args!r}\nBody ({body_len} bytes):\n----\n{body}\n----'
-                    .format(req=self.request, args=self.request.arguments, body_len=len(self.request.body),
+        logger.info('Request\n{req!r}\nHeaders: {h!r}\nBody ({body_len} bytes):\n----\n{body}\n----'
+                    .format(req=self.request, h=self.request.headers, body_len=len(self.request.body),
                             body=body_str))
         self.write('')
 

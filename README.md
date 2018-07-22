@@ -20,6 +20,19 @@ Available options:
 lw301_server --help
 ```
 
+## Catch LW301 traffic
+
+_TODO_
+
+### DNS
+
+Domains resolved by LW301:
+
+* `static.oregonscientific.com` – some init routines
+* `gateway.weather.oregonscientific.com` - sending data
+* `blackbox-c.infra.idtcsd.net` - ?
+
+
 ## Licence
 
 Apache License 2.0
