@@ -40,7 +40,13 @@ class LoggingHandler(RequestHandler):
         self.clear_header('Content-Type')
         self.clear_header('Date')
         self.set_header('Content-Type', 'application/json')
-        logger.info('Request: {!r}, Args: {!r}'.format(self.request, self.request.arguments))
+        try:
+            body_str = self.request.body.decode('utf-8')
+        except:
+            body_str = repr(self.request)
+        logger.info('Request\n{req!r}\nArgs: {args!r}\nBody ({body_len} bytes):\n----\n{body}\n----'
+                    .format(req=self.request, args=self.request.arguments, body_len=len(self.request.body),
+                            body=body_str))
         self.write('')
 
     def compute_etag(self):
@@ -56,7 +62,7 @@ def build_app(debug=False):
 
 def define_options():
     define('port', default=47265, type=int, help='bind port')
-    define('address', default='0.0.0.0', type=str, help='bind address')
+    define('address', default='127.0.0.1', type=str, help='bind address')
     define('debug', default=False, type=bool, help='debug mode')
 
 
