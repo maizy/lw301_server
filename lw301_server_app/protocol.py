@@ -75,6 +75,6 @@ def parse_body(body: bytes, logger=None):
     try:
         qs = parse_qs(body.decode('utf-8'))
     except Exception as e:
-        logger.exception("Unable to decode body")
+        logger is not None and logger.exception("Unable to decode body")
         return None
     return UpdateBody(qs)
