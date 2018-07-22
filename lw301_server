@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+# coding: utf-8
+import logging
+import sys
+import os.path
+
+import tornado.options
+from tornado.options import define, options
+from tornado.ioloop import IOLoop
+from tornado.web import Application, RequestHandler
+
+logger = logging.getLogger(os.path.basename(__file__).replace('.py', ''))
+
+
+class LoggingHandler(RequestHandler):
+
+    async def get(self):
+        await self.send_stub()
+
+    async def post(self):
+        await self.send_stub()
+
+    async def put(self):
+        await self.send_stub()
+
+    async def delete(self):
+        await self.send_stub()
+
+    async def patch(self):
+        await self.send_stub()
+
+    async def head(self):
+        await self.send_stub()
+
+    async def options(self):
+        await self.send_stub()
+
+    async def send_stub(self):
+        self.clear_header('Server')
+        self.clear_header('Content-Type')
+        self.clear_header('Date')
+        self.set_header('Content-Type', 'application/json')
+        logger.info('Request: {!r}, Args: {!r}'.format(self.request, self.request.arguments))
+        self.write('')
+
+    def compute_etag(self):
+        return None
+
+
+def build_app(debug=False):
+    return Application(
+        handlers=[(r'.*', LoggingHandler)],
+        debug=debug,
+    )
+
+
+def define_options():
+    define('port', default=47265, type=int, help='bind port')
+    define('address', default='0.0.0.0', type=str, help='bind address')
+    define('debug', default=False, type=bool, help='debug mode')
+
+
+if __name__ == "__main__":
+    define_options()
+    tornado.options.parse_command_line()
+    application = build_app(debug=options.debug)
+    logger.info('Starting server at {}:{}'.format(options.address, options.port))
+    application.listen(options.port, options.address)
+    try:
+        IOLoop.current().start()
+    except KeyboardInterrupt:
+        logger.info('Server stopped')
+        sys.exit(0)
