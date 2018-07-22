@@ -21,9 +21,9 @@ class State:
         self._history_limit = history_limit
 
     def update_history(self, measurement, value):
-        attr = f'{measurement}_history'
+        attr = '{}_history'.format(measurement)
         if not hasattr(self, attr) or type(getattr(self, attr)) != list:
-            raise Exception(f'unknown measurement {measurement}')
+            raise Exception('unknown measurement {}'.format(measurement))
         current_history = getattr(self, attr)
         if len(current_history) >= self._history_limit:
             current_history = current_history[-(self._history_limit-1):]

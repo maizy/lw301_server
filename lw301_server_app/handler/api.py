@@ -11,7 +11,7 @@ class _HistoryApiHandler(lw301_server_app.handler.Base):
 
     def get(self):
         app_state = self.application.settings['lw301_state']
-        history = getattr(app_state, f'{self.measurement}_history')
+        history = getattr(app_state, '{}_history'.format(self.measurement))
 
         history_json = []
         for ts, value in reversed(history):

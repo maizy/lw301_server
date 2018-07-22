@@ -64,8 +64,8 @@ class UpdateBody:
             self.global_values = values
 
     def __str__(self):
-        return (f'UpdateBody<mac={self.mac}, global={self.global_values}, '
-                f'channel={self.channel}, sensor={self.sensor_values}>')
+        return ('UpdateBody<mac={s.mac}, global={s.global_values}, '
+                'channel={s.channel}, sensor={s.sensor_values}>').format(s=self)
 
     def __eq__(self, other):
         return type(other) == type(self) and self.query == other.query
