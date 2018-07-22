@@ -10,6 +10,7 @@ class UpdateHandler(lw301_server_app.handler.Base):
         if self.request.body is not None and len(self.request.body) > 0:
             body = protocol.parse_body(self.request.body, self.log)
             if body is not None:
+                self.log.debug('Update raw body: {!r}'.format(body))
                 await self.process_parsed_body(body)
         # TODO: emulate real server answer
         self.add_header('Content-Type', 'application/json')
