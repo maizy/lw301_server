@@ -5,14 +5,16 @@ import sys
 import os.path
 
 import tornado.options
-from tornado.options import define, options
+from tornado.options import define, OptionParser
 from tornado.ioloop import IOLoop
 from tornado.web import Application
+import tornado.log
 
 import lw301_server_app.state
 from lw301_server_app.handler.logging import LoggingHandler
 from lw301_server_app.handler.update import UpdateHandler
 from lw301_server_app.handler import api
+from lw301_server_app.trigger.influxdb import InfluxDbTrigger
 
 logger = logging.getLogger(os.path.basename(__file__).replace('.py', ''))
 
@@ -26,9 +28,7 @@ def build_app(debug=False):
             (r'^/api/history/humidity', api.HumidityHistoryApiHandler),
             (r'.*', LoggingHandler)
         ],
-        debug=debug,
-        lw301_state=lw301_server_app.state.State(),
-        logger=logger
+        debug=debug
     )
 
 
@@ -37,15 +37,46 @@ def define_options():
     define('address', default='127.0.0.1', type=str, help='bind address')
     define('debug', default=False, type=bool, help='debug mode')
 
+    # trigger options
+    define('enable-influxdb', default=False, type=bool, help='enable influxdb trigger')
+    InfluxDbTrigger.add_options()
+
+
+def parse_options():
+    define_options()
+    config = os.path.expanduser(os.getenv('LW301_SERVER_CONFIG', '/etc/lw301-server/config.conf'))
+    # use print because logging is unconfigured before app start
+    if os.path.exists(config):
+        print('Found config file at {}'.format(config))
+        tornado.options.parse_config_file(config, final=False)
+    else:
+        print('Config file at {} not found, skipping'.format(config))
+    tornado.options.parse_command_line(final=True)
+    return tornado.options.options
+
+
+def init_triggers(options: OptionParser, ioloop: IOLoop):
+    triggers = []
+    if options.enable_influxdb:
+        logger.info('influxdb trigger enabled')
+        triggers.append(InfluxDbTrigger(ioloop, options))
+    return triggers
+
 
 if __name__ == "__main__":
-    define_options()
-    tornado.options.parse_command_line()
+    ioloop = IOLoop.current()
+    options = parse_options()
     application = build_app(debug=options.debug)
-    logger.info('Starting server at {}:{}'.format(options.address, options.port))
+
+    # additional app context vars
+    application.settings['triggers'] = init_triggers(options, ioloop)
+    application.settings['lw301_state'] = lw301_server_app.state.State()
+    application.settings['logger'] = logger
+
+    logger.info('start server at {}:{}'.format(options.address, options.port))
     application.listen(options.port, options.address)
     try:
-        IOLoop.current().start()
+        ioloop.start()
     except KeyboardInterrupt:
-        logger.info('Server stopped')
+        logger.info('server stopped')
         sys.exit(0)

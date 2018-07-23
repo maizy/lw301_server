@@ -1,0 +1,18 @@
+# encoding: utf-8
+
+## logging
+#logging = 'info'
+#log_to_stderr = True
+#log_file_prefix = '/var/log/lw301-server/server-%s.log'
+
+## influxdb
+# enable influxdb trigger
+#enable_influxdb = True
+
+# influxdb write url (should contains ?db query param)
+#influxdb_writeurl = 'http://localhost:8086/write?db=weather'
+
+# influxdb credentials (option)
+#influxdb_user = 'todd'
+#influxdb_password = 'pa$$word'
+
