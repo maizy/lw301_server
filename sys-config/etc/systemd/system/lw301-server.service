@@ -1,0 +1,11 @@
+[Unit]
+Description=Emulate cloud server for Oregon Scientific LW301
+
+[Service]
+ExecStart=/usr/local/bin/lw301_server
+User=lw301_server
+Restart=on-failure
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
