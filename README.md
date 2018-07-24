@@ -6,11 +6,20 @@
 python3 setup.py install
 ```
 
+Requirements: 
+
+* python 3.5+
+* tornado 5+
+
 ## Usage
 
 ```
 lw301_server
 ```
+
+Default config loaded from `/etc/lw301-server/config.conf`.
+
+Config path may be overridden by environment value `LW301_SERVER_CONFIG`.
 
 Available options:
 
@@ -18,9 +27,40 @@ Available options:
 lw301_server --help
 ```
 
-## Catch LW301 traffic
+CLI options overrided config options.
+
+
+## Triggers
+
+### InfluxDB
+
+Enable by `--enable-influxdb` option. See `--help` for all options.
+
+Trigger send recieved values to influxdb.
+
+Values send as soon as they recieved from the weather station.
+
+Written data:
+
+| Measurement | Tags | Fields |
+| --- | --- | --- |
+| temperature | mac, channel | celsius (float) |
+| humidity | mac, channel | relative (int) |
+| pressure | mac | mmhg (int), hpa (int) |
+
+
+### MQTT
 
 _TODO_
+
+## How to catch LW301 traffic
+
+Summary:
+
+* overwrite DNS for some domains
+* proxy :80 to this app
+
+_TODO_: instructions & sample configs.
 
 ### DNS
 
@@ -32,6 +72,8 @@ Domains resolved by LW301:
 
 
 ## API
+
+Note: history data lost if app stopped.
 
 ### GET /api/history/temperature
 
