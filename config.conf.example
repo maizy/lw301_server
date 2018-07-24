@@ -1,9 +1,10 @@
 # encoding: utf-8
+# save as /etc/lw301-server/config.conf
 
 ## logging
 #logging = 'info'
 #log_to_stderr = True
-#log_file_prefix = '/var/log/lw301-server/server-%s.log'
+#log_file_prefix = '/var/log/lw301-server/server.log'
 
 ## influxdb
 # enable influxdb trigger
