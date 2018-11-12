@@ -4,7 +4,7 @@ from urllib.parse import parse_qs
 
 
 def _convert_to_float(value):
-    if value is None or len(value) != 1 or not re.match(r'[0-9.]+', value[0]):
+    if value is None or len(value) != 1 or not re.match(r'-?[0-9.]+', value[0]):
         return None
     try:
         return float(value[0])
@@ -12,7 +12,7 @@ def _convert_to_float(value):
         return None
 
 
-def _convert_to_int(value):
+def _convert_to_positive_int(value):
     if value is None or len(value) != 1 or not re.match(r'[0-9]+', value[0]):
         return None
     try:
@@ -32,11 +32,11 @@ def _convert_to_string(value):
 
 _SENSOR_VALUES_MAP = {
     'ot': ('temperature_celsius', _convert_to_float),
-    'oh': ('humidity_relative', _convert_to_int),
+    'oh': ('humidity_relative', _convert_to_positive_int),
 }
 
 _GLOBAL_VALUES_MAP = {
-    'baro': ('pressure_hPa', _convert_to_int),
+    'baro': ('pressure_hPa', _convert_to_positive_int),
 }
 
 
@@ -46,7 +46,7 @@ class UpdateBody:
     def __init__(self, query: dict):
         self.query = query
         self.mac = _convert_to_string(query.get('mac'))
-        self.channel = _convert_to_int(query.get('ch'))
+        self.channel = _convert_to_positive_int(query.get('ch'))
         self.sensor_values = None
         self.global_values = None
 

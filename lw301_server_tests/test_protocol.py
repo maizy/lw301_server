@@ -20,3 +20,10 @@ class TestBodyParsing(TestCase):
         self.assertIsNone(body.global_values)
         self.assertEqual(1, body.channel)
         self.assertEqual({'temperature_celsius': 27.6, 'humidity_relative': 77}, body.sensor_values)
+
+    def test_parse_sensor_values_negative_temperature(self):
+        raw = b'mac=00001234abcd&id=84&rid=12&pwr=0&htr=0&cz=0&oh=59&ttr=0&ot=-5.1&ch=1&p=1'
+        body = protocol.parse_body(raw)
+        self.assertIsNone(body.global_values)
+        self.assertEqual(1, body.channel)
+        self.assertEqual({'temperature_celsius': -5.1, 'humidity_relative': 59}, body.sensor_values)
